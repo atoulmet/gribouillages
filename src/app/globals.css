@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Nikkei Maru";
+  src: url("/fonts/PPNikkeiMaru-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Proza Libre";
+  src: url("/fonts/ProzaLibre-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Proza Libre", sans-serif;
+  --font-display: "Nikkei Maru", sans-serif;
+
+  --color-brand-white: #FFFFFF;
+  --color-brand-black: #000000;
+  --color-brand-violet: #9B59F5;
+  --color-brand-blue: #5B6CF5;
+  --color-brand-lavender: #C5C0F0;
+  --color-brand-sky: #7BA7E0;
+  --color-brand-yellow: #FFC107;
+  --color-brand-green: #1DAA5C;
+  --color-brand-salmon: #FF8070;
+  --color-brand-orange: #F06120;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

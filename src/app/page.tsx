@@ -77,11 +77,35 @@ function HomeContent() {
       }
     };
 
+    let touchStartY = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (currentId) return;
+      const deltaY = touchStartY - e.changedTouches[0].clientY;
+      if (deltaY > 30 && phase === "center") {
+        setPhase("hiding");
+        setTimeout(() => {
+          setPhase("corner");
+          window.scrollTo(0, 0);
+        }, 200);
+      } else if (deltaY < -30 && phase === "corner") {
+        setPhase("center");
+      }
+    };
+
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
     };
   }, [phase, currentId]);
 
@@ -97,7 +121,7 @@ function HomeContent() {
 
   return (
     <>
-      <div className="fixed inset-0 bg-[url('/background.svg')] bg-cover bg-center bg-no-repeat -z-10" />
+      <div className="fixed inset-0 bg-white bg-[url('/background.svg')] bg-cover bg-center bg-no-repeat -z-10" />
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-24 min-h-screen">
         {/* Logo centré */}
         <div

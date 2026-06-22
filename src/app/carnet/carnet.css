@@ -12,18 +12,18 @@
 
   min-height: 100vh;
   background: var(--paper);
-  padding: 48px 40px;
+  padding: 20px;
   font-family: var(--font-hanken), system-ui, sans-serif;
   color: var(--ink);
 }
 @media (max-width: 640px) {
   .cn-page {
-    padding: 22px 14px;
+    padding: 10px;
   }
 }
 
 .cn-shell {
-  max-width: 1120px;
+  max-width: 1680px;
   margin: 0 auto;
 }
 

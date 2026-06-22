@@ -1,22 +1,12 @@
-import { promises as fs } from "fs";
-import path from "path";
-import HomeClient from "@/components/HomeClient";
-import type { Artwork } from "@/lib/notion";
-
-// Données générées au build par scripts/fetch-content.ts.
-async function getArtworks(): Promise<Artwork[]> {
-  try {
-    const raw = await fs.readFile(
-      path.join(process.cwd(), "src", "data", "artworks.json"),
-      "utf-8",
-    );
-    return JSON.parse(raw) as Artwork[];
-  } catch {
-    return [];
-  }
-}
+import { getAllArtworks } from "@/lib/artworks";
+import CarnetShell from "@/components/carnet/CarnetShell";
+import CarnetGallery from "@/components/carnet/CarnetGallery";
 
 export default async function Home() {
-  const artworks = await getArtworks();
-  return <HomeClient artworks={artworks} />;
+  const artworks = await getAllArtworks();
+  return (
+    <CarnetShell>
+      <CarnetGallery artworks={artworks} year={new Date().getFullYear()} />
+    </CarnetShell>
+  );
 }

@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [{ source: "/carnet", destination: "/", permanent: false }];
+  },
 };
 
 export default nextConfig;

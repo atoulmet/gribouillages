@@ -10,6 +10,17 @@ export async function generateStaticParams() {
   return artworks.map((a) => ({ id: a.id }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const artworks = await getAllArtworks();
+  const art = artworks.find((a) => a.id === id);
+  return { title: art ? `${art.title} — Gribouillages` : "Gribouillages" };
+}
+
 export default async function ArtworkDetail({
   params,
 }: {
@@ -28,7 +39,7 @@ export default async function ArtworkDetail({
 
       {/* Barre du haut */}
       <div className="cn-topbar">
-        <Link href="/carnet" className="cn-back">
+        <Link href="/" className="cn-back">
           ← Retour à la galerie
         </Link>
         <Logo size={24} />

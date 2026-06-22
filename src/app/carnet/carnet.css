@@ -314,12 +314,19 @@
 }
 .cn-frame__media {
   position: relative;
+  display: block;
+  width: 100%;
   aspect-ratio: 13 / 14;
   overflow: hidden;
   background: #eee;
+  padding: 0;
+  border: 0;
 }
 .cn-frame__media img {
   object-fit: cover;
+}
+.cn-frame__media--zoom {
+  cursor: zoom-in;
 }
 .cn-frame__cap {
   font-family: var(--font-caveat), cursive;
@@ -486,4 +493,95 @@
 }
 .cn-floaty {
   animation: cn-floaty 6s ease-in-out infinite;
+}
+
+/* Plein écran (lightbox) -------------------------------------- */
+.cn-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 18, 15, 0.92);
+  cursor: zoom-out;
+  animation: cn-fade 0.15s ease-out;
+}
+@keyframes cn-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.cn-lightbox__img {
+  max-width: 95vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border: 3px solid #fff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+.cn-lightbox__close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.cn-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.cn-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+.cn-lightbox__nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.cn-lightbox__nav--prev {
+  left: 20px;
+}
+.cn-lightbox__nav--next {
+  right: 20px;
+}
+.cn-lightbox__count {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-caveat), cursive;
+  font-size: 22px;
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .cn-lightbox__nav {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
 }

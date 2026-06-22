@@ -12,6 +12,7 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
   const count = photos.length;
   const hasCarousel = count > 1;
   const [i, setI] = useState(0);
+  const [zoom, setZoom] = useState(false);
 
   const go = useCallback(
     (delta: number) => {
@@ -32,6 +33,21 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [go, hasCarousel]);
 
+  // Plein écran : Échap pour fermer + blocage du scroll de fond.
+  useEffect(() => {
+    if (!zoom) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoom(false);
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [zoom]);
+
   const tint = tintFor(artwork.medium ?? "œuvre");
   const current = photos[i];
 
@@ -41,8 +57,13 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
       <div className="cn-detail__imgcol">
         <span className="cn-tape" />
         <div className="cn-frame">
-          <div className="cn-frame__media">
-            {current ? (
+          {current ? (
+            <button
+              type="button"
+              className="cn-frame__media cn-frame__media--zoom"
+              onClick={() => setZoom(true)}
+              aria-label="Afficher la photo en plein écran"
+            >
               <Image
                 src={current}
                 alt={`${artwork.title} — photo ${i + 1}`}
@@ -50,12 +71,14 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
                 sizes="(max-width:860px) 90vw, 520px"
                 priority
               />
-            ) : (
+            </button>
+          ) : (
+            <div className="cn-frame__media">
               <div className="cn-card__hatch" style={{ background: hatch(tint) }}>
                 <span style={{ color: tint.text }}>{artwork.medium ?? ""}</span>
               </div>
-            )}
-          </div>
+            </div>
+          )}
           <div className="cn-frame__cap">
             planche — {artwork.title.toLowerCase()}
           </div>
@@ -96,10 +119,7 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
           {artwork.tags.length > 0 && (
             <Row k="Catégories" v={artwork.tags.join(", ")} />
           )}
-          <Row
-            k="Photos"
-            v={`${count} image${count > 1 ? "s" : ""}`}
-          />
+          <Row k="Photos" v={`${count} image${count > 1 ? "s" : ""}`} />
         </div>
 
         {/* Carrousel : défile les photos de CE projet */}
@@ -127,6 +147,67 @@ export default function ArtworkDetailView({ artwork }: { artwork: Artwork }) {
           </div>
         )}
       </div>
+
+      {/* Plein écran */}
+      {zoom && current && (
+        <div
+          className="cn-lightbox"
+          onClick={() => setZoom(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${artwork.title} en plein écran`}
+        >
+          <button
+            type="button"
+            className="cn-lightbox__close"
+            onClick={() => setZoom(false)}
+            aria-label="Fermer"
+          >
+            ×
+          </button>
+
+          {hasCarousel && (
+            <>
+              <button
+                type="button"
+                className="cn-lightbox__nav cn-lightbox__nav--prev"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  go(-1);
+                }}
+                aria-label="Photo précédente"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className="cn-lightbox__nav cn-lightbox__nav--next"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  go(1);
+                }}
+                aria-label="Photo suivante"
+              >
+                →
+              </button>
+            </>
+          )}
+
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={current}
+            alt={`${artwork.title} — photo ${i + 1}`}
+            className="cn-lightbox__img"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {hasCarousel && (
+            <span className="cn-lightbox__count">
+              photo {i + 1} sur {count}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Artwork } from "@/lib/notion";
 import ArtworkCard from "./ArtworkCard";
 import Logo from "./Logo";
 import { BlueStar } from "./Decorations";
+import { rotationFor } from "./style";
 
 export default function CarnetGallery({
   artworks,
@@ -24,6 +25,25 @@ export default function CarnetGallery({
   const [active, setActive] = useState<string>("Tout");
   const filtered =
     active === "Tout" ? artworks : artworks.filter((a) => a.medium === active);
+
+  // Mesure le nombre de colonnes réel de la grille (responsive) pour
+  // alterner l'inclinaison des cartes d'un rang à l'autre.
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [cols, setCols] = useState(4);
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const measure = () => {
+      const tracks = getComputedStyle(el)
+        .gridTemplateColumns.split(" ")
+        .filter(Boolean).length;
+      if (tracks) setCols(tracks);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [filtered.length]);
 
   return (
     <div className="cn-panel">
@@ -74,9 +94,14 @@ export default function CarnetGallery({
 
       {/* Grille */}
       {filtered.length > 0 ? (
-        <div className="cn-grid">
+        <div className="cn-grid" ref={gridRef}>
           {filtered.map((a, i) => (
-            <ArtworkCard key={a.id} artwork={a} index={i} />
+            <ArtworkCard
+              key={a.id}
+              artwork={a}
+              index={i}
+              rotation={rotationFor(i, cols)}
+            />
           ))}
         </div>
       ) : (

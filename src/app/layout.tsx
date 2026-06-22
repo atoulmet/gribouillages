@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Gribouillages",
-  description: "Mes dernières œuvres d'art",
+  description: "Mes dernières expérimentations",
 };
 
 export default function RootLayout({

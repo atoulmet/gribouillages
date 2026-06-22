@@ -4,14 +4,16 @@ import type { CSSProperties } from "react";
 import type { Artwork } from "@/lib/notion";
 import { formatFrenchDate } from "@/lib/format";
 import { Flower } from "./Decorations";
-import { rotationFor, tintFor, hatch } from "./style";
+import { tintFor, hatch } from "./style";
 
 export default function ArtworkCard({
   artwork,
   index,
+  rotation,
 }: {
   artwork: Artwork;
   index: number;
+  rotation: number;
 }) {
   const photo = artwork.photos[0];
   const medium = artwork.medium ?? "œuvre";
@@ -24,7 +26,7 @@ export default function ArtworkCard({
     <Link
       href={`/carnet/${artwork.id}`}
       className="cn-card"
-      style={{ "--rot": `${rotationFor(index)}deg` } as CSSProperties}
+      style={{ "--rot": `${rotation}deg` } as CSSProperties}
     >
       <div className="cn-card__media">
         {photo ? (

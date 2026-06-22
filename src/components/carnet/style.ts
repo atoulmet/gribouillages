@@ -1,9 +1,14 @@
 // Constantes visuelles du design « Carnet » (client-safe).
 
-// Légères rotations des cartes pour l'effet scrapbook.
-const ROTATIONS = [-2.5, 2, -4, 3, -2, 3.5, -3, 2.5];
-export function rotationFor(index: number): number {
-  return ROTATIONS[index % ROTATIONS.length];
+// Rotation des cartes : le sens alterne d'un rang à l'autre (zigzag),
+// avec une légère variation d'intensité par colonne pour l'effet scrapbook.
+const MAGNITUDES = [2.6, 2, 3.2, 2.2, 2.8, 1.8];
+export function rotationFor(index: number, cols: number): number {
+  const c = Math.max(1, cols);
+  const row = Math.floor(index / c);
+  const col = index % c;
+  const sign = row % 2 === 0 ? -1 : 1; // rang 1 vers la gauche, rang 2 vers la droite…
+  return +(sign * MAGNITUDES[col % MAGNITUDES.length]).toFixed(2);
 }
 
 // Teintes des aplats hachurés (cartes sans photo), dérivées du médium.

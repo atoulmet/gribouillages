@@ -52,7 +52,7 @@ export default function CarnetGallery({
 
       {/* Sous-titre + filtres */}
       <div className="cn-head">
-        <div className="cn-sub">mes dernières œuvres d&apos;art ✦</div>
+        <div className="cn-sub">Mes dernières expérimentations créatives</div>
         {categories.length > 0 && (
           <div className="cn-filters">
             <Pill

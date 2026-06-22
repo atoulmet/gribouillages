@@ -1,36 +1,16 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-
-interface Artwork {
-  id: string;
-  title: string;
-  date: string;
-  medium: string;
-  tags: string[];
-  description: string;
-  photos: string[];
-}
+import type { Artwork } from "@/lib/notion";
 
 interface ArtworkModalProps {
-  id: string;
+  artwork: Artwork | undefined;
   onClose: () => void;
 }
 
-export default function ArtworkModal({ id, onClose }: ArtworkModalProps) {
-  const [artwork, setArtwork] = useState<Artwork | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ArtworkModal({ artwork, onClose }: ArtworkModalProps) {
   const [photoIndex, setPhotoIndex] = useState(0);
   const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    fetch(`/api/artwork/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setArtwork(data);
-        setLoading(false);
-      });
-  }, [id]);
 
   // Animate in on mount
   useEffect(() => {
@@ -42,7 +22,7 @@ export default function ArtworkModal({ id, onClose }: ArtworkModalProps) {
     setTimeout(onClose, 200);
   }, [onClose]);
 
-  // ESC to close
+  // ESC to close + navigation clavier dans le carrousel
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleClose();
@@ -68,15 +48,7 @@ export default function ArtworkModal({ id, onClose }: ArtworkModalProps) {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {loading ? (
-          <div className="p-8 space-y-4 animate-pulse">
-            <div className="h-8 bg-zinc-200 rounded w-1/2" />
-            <div className="h-4 bg-zinc-200 rounded w-1/3" />
-            <div className="h-48 bg-zinc-200 rounded" />
-            <div className="h-4 bg-zinc-200 rounded" />
-            <div className="h-4 bg-zinc-200 rounded w-2/3" />
-          </div>
-        ) : artwork ? (
+        {artwork ? (
           <div className="p-8">
             {/* Header */}
             <div className="flex items-start justify-between mb-6">
@@ -97,6 +69,7 @@ export default function ArtworkModal({ id, onClose }: ArtworkModalProps) {
             {/* Carrousel */}
             {artwork.photos.length > 0 && (
               <div className="relative mb-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={artwork.photos[photoIndex]}
                   alt={`${artwork.title} - ${photoIndex + 1}`}
@@ -131,9 +104,11 @@ export default function ArtworkModal({ id, onClose }: ArtworkModalProps) {
             )}
 
             {/* Medium badge */}
-            <span className="inline-block bg-brand-lavender text-brand-black text-sm px-3 py-1 mb-4">
-              {artwork.medium}
-            </span>
+            {artwork.medium && (
+              <span className="inline-block bg-brand-lavender text-brand-black text-sm px-3 py-1 mb-4">
+                {artwork.medium}
+              </span>
+            )}
 
             {/* Tags */}
             {artwork.tags.length > 0 && (

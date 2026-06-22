@@ -1,8 +1,11 @@
 import { Client } from "@notionhq/client";
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
-const DATASOURCE_ID = process.env.NOTION_DATASOURCE_ID!;
+// Lu au moment de l'appel (et non à l'import) pour que les variables
+// chargées par dotenv dans le script de build soient bien prises en compte.
+function getNotion() {
+  return new Client({ auth: process.env.NOTION_TOKEN });
+}
 
 export interface Artwork {
   id: string;
@@ -57,8 +60,8 @@ function extractArtwork(page: PageObjectResponse): Artwork {
 }
 
 export async function getPublishedArtworks(): Promise<Artwork[]> {
-  const response = await notion.dataSources.query({
-    data_source_id: DATASOURCE_ID,
+  const response = await getNotion().dataSources.query({
+    data_source_id: process.env.NOTION_DATASOURCE_ID!,
     filter: {
       property: "Publié",
       checkbox: { equals: true },
@@ -69,14 +72,4 @@ export async function getPublishedArtworks(): Promise<Artwork[]> {
   return response.results
     .filter((p): p is PageObjectResponse => "properties" in p)
     .map(extractArtwork);
-}
-
-export async function getArtworkById(id: string): Promise<Artwork | null> {
-  try {
-    const page = await notion.pages.retrieve({ page_id: id });
-    if (!("properties" in page)) return null;
-    return extractArtwork(page as PageObjectResponse);
-  } catch {
-    return null;
-  }
 }

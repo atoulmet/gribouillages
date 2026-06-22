@@ -17,6 +17,10 @@
 /.next/
 /out/
 
+# generated content (rebuilt by scripts/fetch-content.ts at build time)
+/public/artworks/
+/src/data/artworks.json
+
 # production
 /build
 

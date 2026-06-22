@@ -337,8 +337,18 @@
   position: relative;
   width: 74px;
   height: 74px;
-  border: 3px solid var(--ink);
+  border: 2px solid #c9d2dd;
   overflow: hidden;
+  padding: 0;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.cn-thumb:hover {
+  transform: translateY(-2px);
+}
+.cn-thumb--active {
+  border: 3px solid var(--ink);
 }
 .cn-thumb img {
   object-fit: cover;
@@ -422,6 +432,8 @@
   color: var(--ink);
   background: #fff;
   text-decoration: none;
+  padding: 0;
+  cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .cn-nav-btn--filled {

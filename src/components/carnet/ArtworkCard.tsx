@@ -4,20 +4,19 @@ import type { CSSProperties } from "react";
 import type { Artwork } from "@/lib/notion";
 import { formatFrenchDate } from "@/lib/format";
 import { Flower } from "./Decorations";
-import { tintFor, hatch } from "./style";
+import { tintFor, hatch, scatterFor } from "./style";
 
 export default function ArtworkCard({
   artwork,
   index,
-  rotation,
 }: {
   artwork: Artwork;
   index: number;
-  rotation: number;
 }) {
   const photo = artwork.photos[0];
   const medium = artwork.medium ?? "œuvre";
   const tint = tintFor(medium);
+  const { angle, marginTop } = scatterFor(artwork.id);
   const sub = [artwork.medium, formatFrenchDate(artwork.date)]
     .filter(Boolean)
     .join(" · ");
@@ -26,7 +25,7 @@ export default function ArtworkCard({
     <Link
       href={`/carnet/${artwork.id}`}
       className="cn-card"
-      style={{ "--rot": `${rotation}deg` } as CSSProperties}
+      style={{ "--rot": `${angle}deg`, marginTop } as CSSProperties}
     >
       <div className="cn-card__media">
         {photo ? (

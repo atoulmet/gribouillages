@@ -1,14 +1,30 @@
 // Constantes visuelles du design « Carnet » (client-safe).
 
-// Rotation des cartes : le sens alterne d'un rang à l'autre (zigzag),
-// avec une légère variation d'intensité par colonne pour l'effet scrapbook.
-const MAGNITUDES = [2.6, 2, 3.2, 2.2, 2.8, 1.8];
-export function rotationFor(index: number, cols: number): number {
-  const c = Math.max(1, cols);
-  const row = Math.floor(index / c);
-  const col = index % c;
-  const sign = row % 2 === 0 ? -1 : 1; // rang 1 vers la gauche, rang 2 vers la droite…
-  return +(sign * MAGNITUDES[col % MAGNITUDES.length]).toFixed(2);
+// Effet collage désordonné : inclinaison et décalage vertical pseudo-aléatoires
+// dérivés de l'identifiant de l'œuvre (déterministe → stable entre les rendus,
+// mais sans motif régulier visible).
+function hash(str: string, salt: number): number {
+  let h = (2166136261 ^ salt) >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  h ^= h >>> 13;
+  h = Math.imul(h, 0x5bd1e995) >>> 0;
+  h ^= h >>> 15;
+  return h >>> 0;
+}
+
+function unit(str: string, salt: number): number {
+  return hash(str, salt) / 4294967295; // 0..1
+}
+
+export function scatterFor(id: string): { angle: number; marginTop: number } {
+  let angle = (unit(id, 1) * 2 - 1) * 5; // -5°..+5°
+  // Évite les cartes trop droites pour garder le côté « jeté ».
+  if (Math.abs(angle) < 1.4) angle += angle >= 0 ? 1.4 : -1.4;
+  const marginTop = Math.round(unit(id, 2) * 28); // 0..28px de décalage vertical
+  return { angle: +angle.toFixed(2), marginTop };
 }
 
 // Teintes des aplats hachurés (cartes sans photo), dérivées du médium.
